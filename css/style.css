@@ -565,6 +565,14 @@ body {
     margin: 0 auto;
 }
 
+.privacy-notice {
+    margin: 1rem 0;
+    padding: 0.8rem 1rem;
+    border-left: 4px solid var(--primary-color);
+    background-color: rgba(59, 130, 246, 0.1);
+    border-radius: 6px;
+}
+
 /* Footer */
 .footer {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
