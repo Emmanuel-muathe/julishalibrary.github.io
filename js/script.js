@@ -9,6 +9,20 @@ if (localStorage.getItem('darkMode') === 'true') {
     document.body.classList.add('dark-mode');
 }
 
+// Runtime schema for paper records
+const PAPER_REQUIRED_FIELDS = [
+    'id',
+    'title',
+    'subject',
+    'level',
+    'description',
+    'author',
+    'year',
+    'downloads',
+    'rating',
+    'pages',
+    'difficulty',
+    'pdfUrl'
 // Sample Papers Data
 const papersData = [
     {
@@ -284,6 +298,48 @@ const papersData = [
     }
 ];
 
+const PAPER_OPTIONAL_FIELDS = ['url'];
+
+/**
+ * Validate papers data loaded from js/papers-data.js
+ */
+function validatePapersDataRuntime(data) {
+    if (!Array.isArray(data)) {
+        console.error('papersData must be an array.');
+        return false;
+    }
+
+    const allowed = new Set([...PAPER_REQUIRED_FIELDS, ...PAPER_OPTIONAL_FIELDS]);
+    const ids = new Set();
+    let isValid = true;
+
+    data.forEach((paper, index) => {
+        PAPER_REQUIRED_FIELDS.forEach((field) => {
+            if (!(field in paper)) {
+                console.error(`papersData[${index}] is missing required field: ${field}`);
+                isValid = false;
+            }
+        });
+
+        Object.keys(paper).forEach((key) => {
+            if (!allowed.has(key)) {
+                console.warn(`papersData[${index}] has unknown field: ${key}`);
+            }
+        });
+
+        if (ids.has(paper.id)) {
+            console.error(`Duplicate paper id detected: ${paper.id}`);
+            isValid = false;
+        }
+        ids.add(paper.id);
+    });
+
+    return isValid;
+}
+
+const papersData = Array.isArray(window.papersData) ? window.papersData : [];
+validatePapersDataRuntime(papersData);
+
 let currentPreviewedPaper = null;
 let pdfDoc = null;
 let pageNum = 1;
@@ -292,9 +348,6 @@ let pageNumPending = null;
 
 // Add PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-// expose data for debugging
-window.papersData = papersData;
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {

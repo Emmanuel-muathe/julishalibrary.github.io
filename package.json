@@ -4,6 +4,7 @@
   },
   "scripts": {
     "start": "node server.js",
+    "validate:papers": "node scripts/validate-papers-data.js"
     "lint": "npm run lint:html && npm run lint:css && npm run lint:js",
     "lint:html": "htmlhint \"index.html\"",
     "lint:css": "stylelint \"css/**/*.css\"",
