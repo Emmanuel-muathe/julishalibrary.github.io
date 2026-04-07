@@ -303,33 +303,83 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function renderPapers(papers) {
     const papersGrid = document.getElementById('papersGrid');
+    papersGrid.replaceChildren();
 
     if (papers.length === 0) {
-        papersGrid.innerHTML = '<div class="empty-state"><p>No papers found.</p></div>';
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        const message = document.createElement('p');
+        message.textContent = 'No papers found.';
+        emptyState.appendChild(message);
+        papersGrid.appendChild(emptyState);
         return;
     }
 
-    papersGrid.innerHTML = papers.map(paper => `
-        <div class="paper-card" onclick="previewPaper(${paper.id})">
-            <div class="paper-header">
-                <div class="paper-tags">
-                    <span class="paper-subject">${paper.subject}</span>
-                    <span class="paper-level">${paper.level}</span>
-                </div>
-                <h3>${paper.title}</h3>
-            </div>
-            <div class="paper-body">
-                <p class="paper-description">${paper.description}</p>
-                <div class="paper-meta">
-                    <span class="rating">⭐ ${paper.rating}</span>
-                    <span class="downloads">📥 ${paper.downloads}</span>
-                </div>
-                <button class="download-btn" onclick="downloadPaper(event, '${paper.pdfUrl}', '${paper.title}')">
-                    📥 Download
-                </button>
-            </div>
-        </div>
-    `).join('');
+    papers.forEach((paper) => {
+        const paperCard = document.createElement('div');
+        paperCard.className = 'paper-card';
+        paperCard.addEventListener('click', () => previewPaper(paper.id));
+
+        const paperHeader = document.createElement('div');
+        paperHeader.className = 'paper-header';
+
+        const paperTags = document.createElement('div');
+        paperTags.className = 'paper-tags';
+
+        const paperSubject = document.createElement('span');
+        paperSubject.className = 'paper-subject';
+        paperSubject.textContent = paper.subject;
+
+        const paperLevel = document.createElement('span');
+        paperLevel.className = 'paper-level';
+        paperLevel.textContent = paper.level;
+
+        paperTags.appendChild(paperSubject);
+        paperTags.appendChild(paperLevel);
+
+        const paperTitle = document.createElement('h3');
+        paperTitle.textContent = paper.title;
+
+        paperHeader.appendChild(paperTags);
+        paperHeader.appendChild(paperTitle);
+
+        const paperBody = document.createElement('div');
+        paperBody.className = 'paper-body';
+
+        const paperDescription = document.createElement('p');
+        paperDescription.className = 'paper-description';
+        paperDescription.textContent = paper.description;
+
+        const paperMeta = document.createElement('div');
+        paperMeta.className = 'paper-meta';
+
+        const rating = document.createElement('span');
+        rating.className = 'rating';
+        rating.textContent = `⭐ ${paper.rating}`;
+
+        const downloads = document.createElement('span');
+        downloads.className = 'downloads';
+        downloads.textContent = `📥 ${paper.downloads}`;
+
+        paperMeta.appendChild(rating);
+        paperMeta.appendChild(downloads);
+
+        const downloadButton = document.createElement('button');
+        downloadButton.className = 'download-btn';
+        downloadButton.textContent = '📥 Download';
+        downloadButton.addEventListener('click', (event) => {
+            downloadPaper(event, paper.pdfUrl, paper.title);
+        });
+
+        paperBody.appendChild(paperDescription);
+        paperBody.appendChild(paperMeta);
+        paperBody.appendChild(downloadButton);
+
+        paperCard.appendChild(paperHeader);
+        paperCard.appendChild(paperBody);
+
+        papersGrid.appendChild(paperCard);
+    });
 }
 
 /**
