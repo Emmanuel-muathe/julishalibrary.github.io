@@ -255,6 +255,27 @@ body {
     margin-top: 1rem;
 }
 
+
+.section-toggle[aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.section-toggle[aria-expanded="false"] .toggle-icon {
+    transform: rotate(0deg);
+}
+
+.section-toggle .toggle-icon.is-expanded {
+    transform: rotate(180deg);
+}
+
+#subjectsContent[hidden],
+#aboutContent[hidden],
+#contactContent[hidden],
+#newsletterContent[hidden] {
+    display: none !important;
+}
+
+
 .level-filters,
 .filter-tags {
     display: flex;
