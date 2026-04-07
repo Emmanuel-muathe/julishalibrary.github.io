@@ -496,3 +496,91 @@ function toggleSection(id) {
     if (!el) return;
     el.style.display = el.style.display === 'none' || el.style.display === '' ? 'block' : 'none';
 }
+
+/**
+ * Close related papers modal
+ */
+function closeRelatedPapers() {
+    const relatedPapersModal = document.getElementById('relatedPapersModal');
+    if (!relatedPapersModal) return;
+    relatedPapersModal.style.display = 'none';
+}
+
+/**
+ * Capture difficulty feedback for current paper
+ */
+function voteDifficulty(level) {
+    const difficultyFeedback = document.getElementById('difficultyFeedback');
+    if (!difficultyFeedback) return;
+
+    if (!currentPreviewedPaper) {
+        difficultyFeedback.textContent = 'Open a paper preview first to vote on difficulty.';
+        difficultyFeedback.style.display = 'block';
+        return;
+    }
+
+    currentPreviewedPaper.difficulty = level;
+    difficultyFeedback.textContent = `Thanks! You marked this paper as "${level}".`;
+    difficultyFeedback.style.display = 'block';
+}
+
+/**
+ * Open currently previewed PDF in new tab
+ */
+function viewFullPDF() {
+    if (!currentPreviewedPaper || !currentPreviewedPaper.pdfUrl) return;
+    window.open(currentPreviewedPaper.pdfUrl, '_blank', 'noopener,noreferrer');
+}
+
+/**
+ * Share current paper link via clipboard
+ */
+function sharePaperLink() {
+    if (!currentPreviewedPaper || !currentPreviewedPaper.pdfUrl) return;
+
+    const paperUrl = new URL(currentPreviewedPaper.pdfUrl, window.location.href).toString();
+    const fallbackCopy = function(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'absolute';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(paperUrl).then(function() {
+            alert('Paper link copied to clipboard.');
+        }).catch(function() {
+            fallbackCopy(paperUrl);
+            alert('Paper link copied to clipboard.');
+        });
+        return;
+    }
+
+    fallbackCopy(paperUrl);
+    alert('Paper link copied to clipboard.');
+}
+
+/**
+ * Share current paper via email
+ */
+function shareViaEmail() {
+    if (!currentPreviewedPaper || !currentPreviewedPaper.pdfUrl) return;
+
+    const paperUrl = new URL(currentPreviewedPaper.pdfUrl, window.location.href).toString();
+    const subject = encodeURIComponent(`Check out this paper: ${currentPreviewedPaper.title}`);
+    const body = encodeURIComponent(`I found this revision paper on Julisha Library:\n\n${currentPreviewedPaper.title}\n${paperUrl}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+/**
+ * Filter papers by exact subject match
+ */
+function filterBySubject(subject) {
+    const filtered = papersData.filter(paper => paper.subject === subject);
+    renderPapers(filtered);
+}
