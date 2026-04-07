@@ -300,6 +300,7 @@ window.papersData = papersData;
 document.addEventListener('DOMContentLoaded', function() {
     renderFeatured();
     renderPapers(papersData);
+    renderFeatured();
 });
 
 /**
@@ -406,6 +407,51 @@ function renderFeatured() {
     const featuredPapers = papersData.filter(paper => paper.featured === true);
     if (featuredPapers.length === 0) {
         featuredGrid.innerHTML = '<div class="empty-state"><p>No featured papers available yet.</p></div>';
+        return;
+    }
+
+    featuredGrid.innerHTML = featuredPapers.map(paper => `
+        <div class="paper-card" onclick="previewPaper(${paper.id})">
+            <div class="paper-header">
+                <div class="paper-tags">
+                    <span class="paper-subject">${paper.subject}</span>
+                    <span class="paper-level">${paper.level}</span>
+                </div>
+                <h3>${paper.title}</h3>
+            </div>
+            <div class="paper-body">
+                <p class="paper-description">${paper.description}</p>
+                <div class="paper-meta">
+                    <span class="rating">⭐ ${paper.rating}</span>
+                    <span class="downloads">📥 ${paper.downloads}</span>
+                </div>
+                <button class="download-btn" onclick="downloadPaper(event, '${paper.pdfUrl}', '${paper.title}')">
+                    📥 Download
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+/**
+ * Render featured papers using deterministic ranking:
+ * highest rating, then downloads, then newest year, then lowest id.
+ */
+function renderFeatured() {
+    const featuredGrid = document.getElementById('featuredGrid');
+    if (!featuredGrid) return;
+
+    const featuredPapers = [...papersData]
+        .sort((a, b) => {
+            if (b.rating !== a.rating) return b.rating - a.rating;
+            if (b.downloads !== a.downloads) return b.downloads - a.downloads;
+            if (b.year !== a.year) return (b.year || 0) - (a.year || 0);
+            return a.id - b.id;
+        })
+        .slice(0, 6);
+
+    if (featuredPapers.length === 0) {
+        featuredGrid.innerHTML = '<div class="empty-state"><p>No featured papers available right now.</p></div>';
         return;
     }
 
