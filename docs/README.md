@@ -78,8 +78,8 @@ When making changes:
 ## Useful Links
 
 - Main README: [../README.md](../README.md)
-- Quick Start: [../QUICK_START.md](../QUICK_START.md)
-- Deployment: [../DEPLOYMENT.md](../DEPLOYMENT.md)
+- Quick Start: [../SETUP.md](../SETUP.md)
+- Deployment: [DEPLOYMENT.md](DEPLOYMENT.md)
 - License: [../LICENSE](../LICENSE)
 
 ## Common Questions
@@ -94,7 +94,7 @@ A: See [API.md](API.md) - Complete field reference
 A: See [STRUCTURE.md](STRUCTURE.md) - Full directory guide
 
 **Q: How do I deploy?**
-A: See [../DEPLOYMENT.md](../DEPLOYMENT.md) - Deployment instructions
+A: See [DEPLOYMENT.md](DEPLOYMENT.md) - Deployment instructions
 
 ## Contributing to Documentation
 

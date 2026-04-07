@@ -11,8 +11,6 @@ A free, open-source platform for hosting and accessing revision papers and study
 - **No Dependencies**: Pure HTML, CSS, and JavaScript - no frameworks required
 - **Easy to Deploy**: Hosted on GitHub Pages at no cost
 - **Community-Driven**: Easy to contribute new papers and materials
-  
-
 
 📁 Project Structure
 
@@ -25,6 +23,29 @@ Julisha-Library/
 ├── README.md           # This file
 └── LICENSE             # MIT License
 ```
+
+## 🧪 Local quality checks
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run all quality checks:
+
+```bash
+npm run lint
+npm run check:docs
+npm run check:data
+```
+
+Script reference:
+
+- `npm run lint` → runs HTML, CSS, and JavaScript linting
+- `npm run check:docs` → validates markdown links in project docs
+- `npm run check:data` → verifies `papersData` in `js/script.js` matches `papers.json` and checks that referenced PDF files exist
+
 ## 🤝 Contributing
 
 Contributions are welcome! To contribute:
@@ -62,6 +83,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ##🌐 Live Demo
 Visit the live version at: [https://julishalibrary.github.io/]
-
 
 ##Made with ❤️ to make education accessible to everyone**

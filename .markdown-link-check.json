@@ -1,0 +1,26 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "^mailto:"
+    },
+    {
+      "pattern": "^https://julishalibrary.github.io/"
+    },
+    {
+      "pattern": "^https://mozilla.github.io/pdf.js/?$"
+    },
+    {
+      "pattern": "^https://tinypng.com/?$"
+    }
+  ],
+  "httpHeaders": [
+    {
+      "urls": [
+        "https://github.com"
+      ],
+      "headers": {
+        "User-Agent": "github-actions"
+      }
+    }
+  ]
+}
