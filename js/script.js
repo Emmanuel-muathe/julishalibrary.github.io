@@ -21,6 +21,7 @@ const papersData = [
         year: 2026,
         downloads: 0,
         rating: 0,
+        featured: true,
         pages: 0,
         difficulty: "Hard",
         pdfUrl: "papers/biology/klb-biology-form-4.pdf"
@@ -35,6 +36,7 @@ const papersData = [
         year: 2026,
         downloads: 0,
         rating: 0,
+        featured: true,
         pages: 0,
         difficulty: "Hard",
         pdfUrl: "papers/mathematics/form-4-additional-mathematics.pdf"
@@ -49,6 +51,7 @@ const papersData = [
         year: 2026,
         downloads: 0,
         rating: 0,
+        featured: true,
         pages: 0,
         difficulty: "Medium",
         pdfUrl: "papers/physics/physics-form-1-questions.pdf",
@@ -295,6 +298,7 @@ window.papersData = papersData;
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
+    renderFeatured();
     renderPapers(papersData);
 });
 
@@ -320,6 +324,42 @@ function renderPapers(papers) {
     }
 
     papersGrid.innerHTML = papers.map(paper => `
+        <div class="paper-card" onclick="previewPaper(${paper.id})">
+            <div class="paper-header">
+                <div class="paper-tags">
+                    <span class="paper-subject">${paper.subject}</span>
+                    <span class="paper-level">${paper.level}</span>
+                </div>
+                <h3>${paper.title}</h3>
+            </div>
+            <div class="paper-body">
+                <p class="paper-description">${paper.description}</p>
+                <div class="paper-meta">
+                    <span class="rating">⭐ ${paper.rating}</span>
+                    <span class="downloads">📥 ${paper.downloads}</span>
+                </div>
+                <button class="download-btn" onclick="downloadPaper(event, '${paper.pdfUrl}', '${paper.title}')">
+                    📥 Download
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+/**
+ * Render featured papers
+ */
+function renderFeatured() {
+    const featuredGrid = document.getElementById('featuredGrid');
+    if (!featuredGrid) return;
+
+    const featuredPapers = papersData.filter(paper => paper.featured === true);
+    if (featuredPapers.length === 0) {
+        featuredGrid.innerHTML = '<div class="empty-state"><p>No featured papers available yet.</p></div>';
+        return;
+    }
+
+    featuredGrid.innerHTML = featuredPapers.map(paper => `
         <div class="paper-card" onclick="previewPaper(${paper.id})">
             <div class="paper-header">
                 <div class="paper-tags">

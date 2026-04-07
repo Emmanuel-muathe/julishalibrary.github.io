@@ -37,7 +37,7 @@ All papers are stored in a JavaScript array called `papersData` located in `js/s
     year: Number,                  // Publication year
     downloads: Number,             // Download count
     rating: Number,                // Average rating (0-5, decimal)
-    featured: Boolean,             // Featured papers appear in hero section
+    featured: Boolean,             // Optional: shows paper in Featured section when true
     pages: Number,                 // Number of pages
     difficulty: String,            // "Easy", "Medium", or "Hard"
     pdfUrl: String,                // Path to PDF file
@@ -79,7 +79,7 @@ All papers are stored in a JavaScript array called `papersData` located in `js/s
 | `year` | Number | ✅ | 4-digit year (e.g., 2025, 2026) |
 | `downloads` | Number | ✅ | Integer starting from 0 |
 | `rating` | Number | ✅ | 0-5 with decimals (e.g., 4.8) |
-| `featured` | Boolean | ✅ | true/false. Featured papers show in trending section |
+| `featured` | Boolean | ❌ | Optional. Set `true` to include the paper in the Featured section |
 | `pages` | Number | ✅ | Integer. Total pages in PDF |
 | `difficulty` | String | ✅ | One of: "Easy", "Medium", "Hard" |
 | `pdfUrl` | String | ✅ | Relative path to PDF: `papers/subject/filename.pdf` |
@@ -113,37 +113,12 @@ All papers are stored in a JavaScript array called `papersData` located in `js/s
 ### Search & Filter Functions
 
 ```javascript
-// Filter papers by subject
-filterBySubject(subject: String): void
-// Example: filterBySubject('Mathematics')
-
-// Filter papers by grade/form level
-filterByLevel(level: String): void
-// Example: filterByLevel('Grade 10')
-
 // Search papers by title/topic
 filterPapers(): void
 // Reads from searchInput element
 
-// Toggle filter sections
-toggleFilter(filterId: String): void
-// Example: toggleFilter('subject-filter')
-```
-
-### Sort Functions
-
-```javascript
-// Sort by download count
-sortByDownloads(): void
-
-// Sort by rating
-sortByRating(): void
-
-// Sort by year (newest first)
-sortByNewest(): void
-
-// Sort alphabetically by title
-sortByTitle(): void
+// Show title suggestions while searching
+showSearchSuggestions(): void
 ```
 
 ### Paper Preview & Download
@@ -154,8 +129,11 @@ previewPaper(paperId: Number): void
 // Example: previewPaper(1)
 
 // Download paper as PDF
-downloadPaper(title: String): void
-// Example: downloadPaper('Algebra Fundamentals')
+downloadPaper(event: Event|null, pdfUrl: String, title: String): void
+// Example: downloadPaper(event, 'papers/mathematics/algebra.pdf', 'Algebra Fundamentals')
+
+// Download currently previewed paper
+downloadPreviewedPaper(): void
 
 // Close preview modal
 closePreview(): void
@@ -169,49 +147,11 @@ nextPage(): void
 previousPage(): void
 ```
 
-### Selection & Batch Operations
+### UI Helpers
 
 ```javascript
-// Toggle selection of a single paper
-togglePaperSelection(paperId: Number): void
-
-// Toggle select/deselect all papers
-toggleSelectAll(): void
-
-// Download all selected papers as ZIP
-batchDownloadPapers(): void
-
-// Update the selected papers count display
-updateSelectedCount(): void
-```
-
-### Sharing
-
-```javascript
-// Copy paper link to clipboard
-sharePaperLink(): void
-
-// Open email client with paper details
-shareViaEmail(): void
-
-// Open full PDF in new browser tab
-viewFullPDF(): void
-```
-
-### Search History
-
-```javascript
-// Add search term to local history
-addToSearchHistory(term: String): void
-
-// Display saved search history
-displaySearchHistory(): void
-
-// Search using a history item
-searchFromHistory(term: String): void
-
-// Show autocomplete suggestions
-showSearchSuggestions(): void
+// Section expand/collapse helper
+toggleSection(id: String): void
 ```
 
 ### Rendering
@@ -223,18 +163,6 @@ renderPapers(papers: Array): void
 
 // Render featured papers section
 renderFeatured(): void
-
-// Render trending papers section
-renderTrending(): void
-```
-
-### Difficulty Voting
-
-```javascript
-// Vote on paper difficulty
-voteDifficulty(level: String): void
-// Example: voteDifficulty('Hard')
-// level: "Easy", "Medium", or "Hard"
 ```
 
 ### Theme
@@ -251,9 +179,6 @@ toggleDarkMode(): void
 ```javascript
 // Dark mode preference
 localStorage.getItem('darkMode')          // 'true' or 'false'
-
-// Search history
-localStorage.getItem('searchHistory')     // JSON array of search terms
 ```
 
 ## PDF.js Integration
@@ -295,7 +220,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = '...'
     year: 2026,
     downloads: 0,
     rating: 4.5,
-    featured: false,                           // Set true for hero section
+    featured: false,                           // Optional: true to show in Featured section
     pages: 45,
     difficulty: "Medium",
     pdfUrl: "papers/mathematics/your-paper.pdf",  // Relative path
@@ -316,48 +241,6 @@ papers/mathematics/your-paper.pdf
 git add papers/ js/script.js
 git commit -m "Add: Your Paper Title"
 git push
-```
-
-## Filtering Logic
-
-### Combined Filters
-
-When multiple filters are active:
-
-```javascript
-// Subject + Level filter
-filteredPapers = papersData.filter(p => 
-    p.subject === currentSubject && p.level === currentLevel
-);
-
-// Search + Subject filter
-filteredPapers = papersData.filter(p =>
-    p.subject === currentSubject &&
-    (p.title.includes(searchTerm) || p.description.includes(searchTerm))
-);
-
-// Advanced filters (Rating + Year + Difficulty)
-filteredPapers = papersData.filter(p =>
-    p.rating >= minRating &&
-    p.year === selectedYear &&
-    p.difficulty === selectedDifficulty
-);
-```
-
-## Sorting Logic
-
-```javascript
-// By downloads (descending)
-papers.sort((a, b) => b.downloads - a.downloads)
-
-// By rating (descending)
-papers.sort((a, b) => b.rating - a.rating)
-
-// By year (descending - newest first)
-papers.sort((a, b) => b.year - a.year)
-
-// By title (ascending - A to Z)
-papers.sort((a, b) => a.title.localeCompare(b.title))
 ```
 
 ## Error Handling
@@ -382,8 +265,7 @@ If a `pdfUrl` points to a non-existent file, the preview will show an error mess
 - PDFs are loaded on-demand (not on page load)
 - Large PDFs (>50MB) may take time to load
 - PDF.js renders only the current page (memory efficient)
-- Search history is limited to last 5 items
-- Batch operations limited to visible filtered papers
+- Search suggestions are generated from current paper titles
 
 ## Future API Enhancements
 
