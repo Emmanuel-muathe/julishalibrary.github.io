@@ -1,6 +1,9 @@
 # API / Front-End Function Reference
 
 This document reflects the functions currently implemented in `js/script.js`.
+# Papers Data API
+
+`papersData` is the canonical dataset used by the UI and validation tooling.
 ## UI handler parity checklist
 
 Keep this checklist synchronized with every `onclick="..."` handler in `index.html`.
@@ -28,6 +31,16 @@ Paper records are stored in `papersData` (array of objects).
 ### Current paper object shape
 
 ```js
+## Source of truth
+
+- Browser/runtime source: `js/papers-data.js`
+- Runtime validator: `js/script.js`
+- CI/automation validator: `scripts/validate-papers-data.js`
+
+## Schema: `PaperRecord`
+
+### Required fields
+```javascript
 {
   id: 1,
   title: "KLB Biology Form 4",
@@ -213,13 +226,28 @@ previousPage(): void
 toggleSection(id: String): void
 ```
 
-### Rendering
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | number | Must be unique across all records. |
+| `title` | string | Human-readable paper title. |
+| `subject` | string | Subject name shown in tags and search. |
+| `level` | string | Class/form level (for example, `Form 1`). |
+| `description` | string | Short summary shown in cards and preview. |
+| `author` | string | Publisher/author label. |
+| `year` | number | Publication year metadata. |
+| `downloads` | number | Download count (UI metric). |
+| `rating` | number | Rating value (UI metric). |
+| `pages` | number | Page count shown in preview. |
+| `difficulty` | string | Display label such as `Easy`, `Medium`, `Hard`. |
+| `pdfUrl` | string | Relative path to local PDF file, must exist on disk. |
 
-```javascript
-// Render paper cards to the grid
-renderPapers(papers: Array): void
-// Example: renderPapers(papersData)
+### Optional fields
 
+| Field | Type | Notes |
+| --- | --- | --- |
+| `url` | string | Optional external/reference URL. Not required by UI. |
+
+## Validation rules
 // Render featured papers section
 renderFeatured(): void
 ```
@@ -312,6 +340,18 @@ downloadPreviewedPaper();
 ```
 
 ## Initialization flow
+1. Every record must contain all required fields.
+2. `id` values must be unique.
+3. `pdfUrl` must point to an existing file.
+4. Object literals should not contain duplicate keys.
+
+## Validation command
+
+```bash
+npm run validate:papers
+```
+
+This command is used by CI and can also be used in a local pre-commit hook.
 ## Error Handling
 
 On `DOMContentLoaded`, the app runs:
