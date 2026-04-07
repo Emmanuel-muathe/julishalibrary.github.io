@@ -1,9 +1,16 @@
 # Julisha Library 📚
 
-A free, open-source platform for hosting and accessing revision papers and study materials. Built with HTML, CSS, and JavaScript, and hosted on GitHub Pages.
+A free, open-source platform for hosting and accessing revision papers and study materials.
 
-## 🌟 Features
+## Current Project Layout
 
+This repository is currently organized around these top-level app files and folders:
+
+- `index.html` — main page entry point
+- `css/` — site styling (`css/style.css`)
+- `js/` — front-end behavior (`js/script.js`)
+- `papers/` — subject-organized PDF files
+- `server.js` — local Node/Express static server
 - **Completely Free**: All materials are free to access and download
 - **Multiple Subjects**: Browse papers across Mathematics, Physics, Chemistry, Biology, English, History, and more
 - **Search & Filter**: Easily search for papers by title or topic
@@ -12,8 +19,9 @@ A free, open-source platform for hosting and accessing revision papers and study
 - **Easy to Deploy**: Hosted on GitHub Pages at no cost
 - **Community-Driven**: Easy to contribute new papers and materials
 
-📁 Project Structure
+See full structure details in [docs/STRUCTURE.md](docs/STRUCTURE.md).
 
+## Run Locally
 ```
 Julisha-Library/
 ├── code/
@@ -50,38 +58,30 @@ Script reference:
 
 Contributions are welcome! To contribute:
 
-1. Fork the repository
-2. Create a new branch for your changes
-3. Make improvements or add new papers
-4. Submit a pull request with a clear description
+### Option 1: Open directly
+Open `index.html` in a browser.
 
-## 💡 Suggestions for Expansion
+### Option 2: Use the local server (recommended)
 
-- Implement user accounts and collections
-- Add PDF upload functionality
-- Create a contribution form for community submissions
-- Add email notifications for new papers
-- Implement a rating system
-- Add support for multiple languages
-- Create mobile app version
+```bash
+npm install
+npm start
+```
 
-## 📄 License
+Then open `http://localhost:3000`.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Documentation
 
-## 🙏 Acknowledgments
+- [Documentation index](docs/README.md)
+- [Deployment guide](docs/DEPLOYMENT.md)
+- [Project structure](docs/STRUCTURE.md)
+- [API/functions reference](docs/API.md)
 
-- Built with ❤️ for students worldwide
-- Inspired by platforms like StudyUCO
+## Contributing
 
-## 📞 Support
+Contributions are welcome. Please open a pull request with a clear summary of your changes.
 
-##For issues, feature requests, or questions:
-##- Open an issue on GitHub
-##- Check existing issues first to avoid duplicates
-##- Email us at julishalibrary@gmail.com
+## License
 
-##🌐 Live Demo
-Visit the live version at: [https://julishalibrary.github.io/]
-
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
 ##Made with ❤️ to make education accessible to everyone**

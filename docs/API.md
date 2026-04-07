@@ -1,3 +1,6 @@
+# API / Front-End Function Reference
+
+This document reflects the functions currently implemented in `js/script.js`.
 # Papers Data API
 
 `papersData` is the canonical dataset used by the UI and validation tooling.
@@ -21,6 +24,13 @@ Keep this checklist synchronized with every `onclick="..."` handler in `index.ht
 
 ## Papers Data Structure
 
+## Data Model
+
+Paper records are stored in `papersData` (array of objects).
+
+### Current paper object shape
+
+```js
 ## Source of truth
 
 - Browser/runtime source: `js/papers-data.js`
@@ -32,6 +42,19 @@ Keep this checklist synchronized with every `onclick="..."` handler in `index.ht
 ### Required fields
 ```javascript
 {
+  id: 1,
+  title: "KLB Biology Form 4",
+  subject: "Biology",
+  level: "Form 4",
+  description: "Complete KLB Biology Form 4 study guide",
+  author: "KLB Publishers",
+  year: 2026,
+  downloads: 0,
+  rating: 0,
+  pages: 0,
+  difficulty: "Hard",
+  pdfUrl: "papers/biology/klb-biology-form-4.pdf",
+  url: "#" // optional; present on some records
     id: Number,                    // Unique identifier
     title: String,                 // Paper title
     subject: String,               // Subject name
@@ -49,8 +72,53 @@ Keep this checklist synchronized with every `onclick="..."` handler in `index.ht
 }
 ```
 
-### Complete Example
+## Global state and integrations
 
+- `window.papersData` is exposed for debugging.
+- PDF.js is used for preview rendering.
+- Local storage key: `darkMode`.
+
+## Implemented functions
+
+### Theme
+
+#### `toggleDarkMode()`
+Toggles `dark-mode` class on `<body>` and persists preference to `localStorage`.
+
+```js
+toggleDarkMode();
+```
+
+---
+
+### Rendering and filtering
+
+#### `renderPapers(papers)`
+Renders a paper card grid into `#papersGrid`.
+
+```js
+renderPapers(papersData);
+```
+
+#### `filterPapers()`
+Reads `#searchInput`, filters by `title`, `description`, and `subject`, then re-renders.
+
+```js
+filterPapers();
+```
+
+#### `showSearchSuggestions()`
+Builds `<datalist>` options in `#searchSuggestions` from title matches.
+
+```js
+showSearchSuggestions();
+```
+
+#### `toggleSection(id)`
+Shows/hides an element by id using `style.display`.
+
+```js
+toggleSection('aboutSection');
 ```javascript
 {
     id: 1,
@@ -184,47 +252,39 @@ toggleSection(id: String): void
 renderFeatured(): void
 ```
 
-### Theme
+---
 
-```javascript
-// Toggle dark/light mode
-toggleDarkMode(): void
+### Preview and PDF navigation
 
-// Preference is saved to localStorage
-```
+#### `previewPaper(paperId)`
+Loads selected paper metadata into preview modal and starts PDF load.
 
-## Local Storage Keys
-
+```js
+previewPaper(1);
 ```javascript
 // Dark mode preference
 localStorage.getItem('darkMode')          // 'true' or 'false'
 ```
 
-## PDF.js Integration
+#### `closePreview()`
+Closes preview modal and resets PDF state.
 
-The application uses PDF.js (v3.11.174) via CDN for PDF preview functionality.
-
-### PDF Viewer Variables
-
-```javascript
-let pdfDoc = null;                    // Current PDF document
-let pageNum = 1;                      // Current page number
-let pageRendering = false;            // Rendering in progress flag
-let pageNumPending = null;            // Pending page to render
+```js
+closePreview();
 ```
 
-### PDF Rendering Functions
+#### `loadPDF(url)`
+Loads PDF document with PDF.js and renders first page.
 
-```javascript
-// Render specific page to canvas
-renderPage(num: Number): void
-
-// Initialize PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = '...'
+```js
+loadPDF('papers/biology/klb-biology-form-4.pdf');
 ```
 
-## Adding New Papers (Programmatic)
+#### `renderPage(num)`
+Renders a specific page number onto `#pdfCanvas`.
 
+```js
+renderPage(2);
 ### Step 1: Add Paper Object
 
 ```javascript
@@ -247,6 +307,39 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = '...'
 }
 ```
 
+#### `nextPage()`
+Advances preview to the next page if available.
+
+```js
+nextPage();
+```
+
+#### `previousPage()`
+Moves preview to the previous page if available.
+
+```js
+previousPage();
+```
+
+---
+
+### Download
+
+#### `downloadPaper(event, pdfUrl, title)`
+Triggers file download using an `<a>` element.
+
+```js
+downloadPaper(null, 'papers/physics/physics-form-1-questions.pdf', 'Physics Form 1 Questions');
+```
+
+#### `downloadPreviewedPaper()`
+Downloads the currently previewed paper.
+
+```js
+downloadPreviewedPaper();
+```
+
+## Initialization flow
 1. Every record must contain all required fields.
 2. `id` values must be unique.
 3. `pdfUrl` must point to an existing file.
@@ -261,17 +354,13 @@ npm run validate:papers
 This command is used by CI and can also be used in a local pre-commit hook.
 ## Error Handling
 
-### PDF Loading Errors
+On `DOMContentLoaded`, the app runs:
 
-```javascript
-pdfjsLib.getDocument(pdfUrl).promise
-    .then(pdf => { /* success */ })
-    .catch(error => {
-        console.error('PDF Error:', error);
-        alert('Could not load PDF preview...');
-    });
+```js
+renderPapers(papersData);
 ```
 
+This displays all available papers at startup.
 ### File Not Found
 
 If a `pdfUrl` points to a non-existent file, the preview will show an error message and offer the download option.

@@ -1,49 +1,33 @@
-# Documentation 📖
+# Documentation
 
-This directory contains all project documentation.
+This directory contains technical and contributor-facing documentation for the current repository layout.
 
-## Files
+## Contents
 
-### [CONTRIBUTING.md](CONTRIBUTING.md)
-Guidelines for contributing papers and code:
-- How to prepare papers
-- Paper submission process
-- Quality standards
-- Pull request workflow
-- Types of contributions accepted
+- [API.md](./API.md) — Implemented front-end data model and function reference
+- [STRUCTURE.md](./STRUCTURE.md) — Current file/folder structure
+- [DEPLOYMENT.md](./DEPLOYMENT.md) — GitHub Pages and local deployment guide
+- [CONTRIBUTING.md](./CONTRIBUTING.md) — Contribution process
+- [ADDING_PAPERS.md](./ADDING_PAPERS.md) — Paper upload workflow
+- [SUBMISSIONS.md](./SUBMISSIONS.md) — Submission notes
 
-### [STRUCTURE.md](STRUCTURE.md)
-Project organization and architecture:
-- Directory structure explanation
-- File purposes and sizes
-- Adding new papers walkthrough
-- Deployment considerations
-- Workflow examples
+## Quick links outside docs
 
-### [API.md](API.md)
-Technical documentation for developers:
-- Papers data structure
-- Complete field reference
-- Available functions
-- Search and filter logic
-- PDF.js integration
-- Local storage keys
+- [Main README](../README.md)
+- [Site entry point (`index.html`)](../index.html)
+- [Local server (`server.js`)](../server.js)
 
-## Quick Navigation
+## Maintenance checklist
 
-### For Contributors 📝
-Start with [CONTRIBUTING.md](CONTRIBUTING.md) to learn:
-- How to submit papers
-- Quality guidelines
-- Pull request process
+When code paths change, update docs to match:
 
-### For Developers 👨‍💻
-See [API.md](API.md) for:
-- Data structures
-- Function references
-- Integration details
-- Future enhancements
+1. `index.html`
+2. `css/`
+3. `js/`
+4. `papers/`
+5. `server.js`
 
+Also remove stale links to files that do not exist.
 ### For Project Managers 📊
 Read [STRUCTURE.md](STRUCTURE.md) for:
 - Project organization
