@@ -4,6 +4,7 @@
     "express": "^4.18.2"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "validate:papers": "node scripts/validate-papers-data.js"
   }
 }
