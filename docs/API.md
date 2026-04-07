@@ -1,378 +1,150 @@
-# API Documentation 🔧
+# API / Front-End Function Reference
 
-## Papers Data Structure
+This document reflects the functions currently implemented in `js/script.js`.
 
-### Overview
+## Data Model
 
-All papers are stored in a JavaScript array called `papersData` located in `js/script.js`. Each paper object contains metadata used by the application.
+Paper records are stored in `papersData` (array of objects).
 
-### Paper Object Schema
+### Current paper object shape
 
-```javascript
+```js
 {
-    id: Number,                    // Unique identifier
-    title: String,                 // Paper title
-    subject: String,               // Subject name
-    level: String,                 // Grade or Form level
-    description: String,           // Short description (1-2 lines)
-    author: String,                // Author/Teacher name
-    year: Number,                  // Publication year
-    downloads: Number,             // Download count
-    rating: Number,                // Average rating (0-5, decimal)
-    featured: Boolean,             // Featured papers appear in hero section
-    pages: Number,                 // Number of pages
-    difficulty: String,            // "Easy", "Medium", or "Hard"
-    pdfUrl: String,                // Path to PDF file
-    url: String                    // Legacy external URL (usually "#")
+  id: 1,
+  title: "KLB Biology Form 4",
+  subject: "Biology",
+  level: "Form 4",
+  description: "Complete KLB Biology Form 4 study guide",
+  author: "KLB Publishers",
+  year: 2026,
+  downloads: 0,
+  rating: 0,
+  pages: 0,
+  difficulty: "Hard",
+  pdfUrl: "papers/biology/klb-biology-form-4.pdf",
+  url: "#" // optional; present on some records
 }
 ```
 
-### Complete Example
+## Global state and integrations
 
-```javascript
-{
-    id: 1,
-    title: "Algebra Fundamentals",
-    subject: "Mathematics",
-    level: "Grade 10",
-    description: "Complete guide to algebraic equations and functions",
-    author: "Dr. Smith",
-    year: 2025,
-    downloads: 245,
-    rating: 4.8,
-    featured: true,
-    pages: 42,
-    difficulty: "Medium",
-    pdfUrl: "papers/mathematics/algebra-fundamentals.pdf",
-    url: "#"
-}
-```
+- `window.papersData` is exposed for debugging.
+- PDF.js is used for preview rendering.
+- Local storage key: `darkMode`.
 
-## Field Descriptions
-
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `id` | Number | ✅ | Unique integer. Use next available number when adding papers |
-| `title` | String | ✅ | 3-100 characters. Paper title |
-| `subject` | String | ✅ | One of: "Mathematics", "Physics", "Chemistry", "Biology", "English", "History", "Geography" |
-| `level` | String | ✅ | One of: "Grade 9", "Grade 10", "Grade 11", "Grade 12", "Form 1", "Form 2", "Form 3", "Form 4" |
-| `description` | String | ✅ | 10-200 characters. Brief description for card display |
-| `author` | String | ✅ | Author or teacher name |
-| `year` | Number | ✅ | 4-digit year (e.g., 2025, 2026) |
-| `downloads` | Number | ✅ | Integer starting from 0 |
-| `rating` | Number | ✅ | 0-5 with decimals (e.g., 4.8) |
-| `featured` | Boolean | ✅ | true/false. Featured papers show in trending section |
-| `pages` | Number | ✅ | Integer. Total pages in PDF |
-| `difficulty` | String | ✅ | One of: "Easy", "Medium", "Hard" |
-| `pdfUrl` | String | ✅ | Relative path to PDF: `papers/subject/filename.pdf` |
-| `url` | String | ❌ | Legacy field. Leave as `"#"` |
-
-## Subject Mapping
-
-```javascript
-// Valid subjects and their folders:
-"Mathematics"  → papers/mathematics/
-"Physics"      → papers/physics/
-"Chemistry"    → papers/chemistry/
-"Biology"      → papers/biology/
-"English"      → papers/english/
-"History"      → papers/history/
-"Geography"    → papers/geography/
-```
-
-## Level Mapping
-
-```javascript
-// High School Grades:
-"Grade 9", "Grade 10", "Grade 11", "Grade 12"
-
-// Alternative Forms (Kenyan curriculum):
-"Form 1", "Form 2", "Form 3", "Form 4"
-```
-
-## Functions & Methods
-
-### Search & Filter Functions
-
-```javascript
-// Filter papers by subject
-filterBySubject(subject: String): void
-// Example: filterBySubject('Mathematics')
-
-// Filter papers by grade/form level
-filterByLevel(level: String): void
-// Example: filterByLevel('Grade 10')
-
-// Search papers by title/topic
-filterPapers(): void
-// Reads from searchInput element
-
-// Toggle filter sections
-toggleFilter(filterId: String): void
-// Example: toggleFilter('subject-filter')
-```
-
-### Sort Functions
-
-```javascript
-// Sort by download count
-sortByDownloads(): void
-
-// Sort by rating
-sortByRating(): void
-
-// Sort by year (newest first)
-sortByNewest(): void
-
-// Sort alphabetically by title
-sortByTitle(): void
-```
-
-### Paper Preview & Download
-
-```javascript
-// Open paper preview modal with PDF viewer
-previewPaper(paperId: Number): void
-// Example: previewPaper(1)
-
-// Download paper as PDF
-downloadPaper(title: String): void
-// Example: downloadPaper('Algebra Fundamentals')
-
-// Close preview modal
-closePreview(): void
-
-// Load and display PDF in modal
-loadPDF(pdfUrl: String): void
-// Internal function, called by previewPaper()
-
-// Navigate PDF pages
-nextPage(): void
-previousPage(): void
-```
-
-### Selection & Batch Operations
-
-```javascript
-// Toggle selection of a single paper
-togglePaperSelection(paperId: Number): void
-
-// Toggle select/deselect all papers
-toggleSelectAll(): void
-
-// Download all selected papers as ZIP
-batchDownloadPapers(): void
-
-// Update the selected papers count display
-updateSelectedCount(): void
-```
-
-### Sharing
-
-```javascript
-// Copy paper link to clipboard
-sharePaperLink(): void
-
-// Open email client with paper details
-shareViaEmail(): void
-
-// Open full PDF in new browser tab
-viewFullPDF(): void
-```
-
-### Search History
-
-```javascript
-// Add search term to local history
-addToSearchHistory(term: String): void
-
-// Display saved search history
-displaySearchHistory(): void
-
-// Search using a history item
-searchFromHistory(term: String): void
-
-// Show autocomplete suggestions
-showSearchSuggestions(): void
-```
-
-### Rendering
-
-```javascript
-// Render paper cards to the grid
-renderPapers(papers: Array): void
-// Example: renderPapers(papersData)
-
-// Render featured papers section
-renderFeatured(): void
-
-// Render trending papers section
-renderTrending(): void
-```
-
-### Difficulty Voting
-
-```javascript
-// Vote on paper difficulty
-voteDifficulty(level: String): void
-// Example: voteDifficulty('Hard')
-// level: "Easy", "Medium", or "Hard"
-```
+## Implemented functions
 
 ### Theme
 
-```javascript
-// Toggle dark/light mode
-toggleDarkMode(): void
+#### `toggleDarkMode()`
+Toggles `dark-mode` class on `<body>` and persists preference to `localStorage`.
 
-// Preference is saved to localStorage
+```js
+toggleDarkMode();
 ```
 
-## Local Storage Keys
+---
 
-```javascript
-// Dark mode preference
-localStorage.getItem('darkMode')          // 'true' or 'false'
+### Rendering and filtering
 
-// Search history
-localStorage.getItem('searchHistory')     // JSON array of search terms
+#### `renderPapers(papers)`
+Renders a paper card grid into `#papersGrid`.
+
+```js
+renderPapers(papersData);
 ```
 
-## PDF.js Integration
+#### `filterPapers()`
+Reads `#searchInput`, filters by `title`, `description`, and `subject`, then re-renders.
 
-The application uses PDF.js (v3.11.174) via CDN for PDF preview functionality.
-
-### PDF Viewer Variables
-
-```javascript
-let pdfDoc = null;                    // Current PDF document
-let pageNum = 1;                      // Current page number
-let pageRendering = false;            // Rendering in progress flag
-let pageNumPending = null;            // Pending page to render
+```js
+filterPapers();
 ```
 
-### PDF Rendering Functions
+#### `showSearchSuggestions()`
+Builds `<datalist>` options in `#searchSuggestions` from title matches.
 
-```javascript
-// Render specific page to canvas
-renderPage(num: Number): void
-
-// Initialize PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = '...'
+```js
+showSearchSuggestions();
 ```
 
-## Adding New Papers (Programmatic)
+#### `toggleSection(id)`
+Shows/hides an element by id using `style.display`.
 
-### Step 1: Add Paper Object
-
-```javascript
-// In js/script.js, find the papersData array and add:
-{
-    id: 13,                                    // Next ID
-    title: "Your Paper Title",
-    subject: "Mathematics",                    // Must be valid subject
-    level: "Grade 10",                         // Must be valid level
-    description: "Brief description",
-    author: "Your Name",
-    year: 2026,
-    downloads: 0,
-    rating: 4.5,
-    featured: false,                           // Set true for hero section
-    pages: 45,
-    difficulty: "Medium",
-    pdfUrl: "papers/mathematics/your-paper.pdf",  // Relative path
-    url: "#"
-}
+```js
+toggleSection('aboutSection');
 ```
 
-### Step 2: Upload PDF
+---
 
-Place the PDF file at the specified `pdfUrl` path:
-```
-papers/mathematics/your-paper.pdf
-```
+### Preview and PDF navigation
 
-### Step 3: Commit & Push
+#### `previewPaper(paperId)`
+Loads selected paper metadata into preview modal and starts PDF load.
 
-```bash
-git add papers/ js/script.js
-git commit -m "Add: Your Paper Title"
-git push
+```js
+previewPaper(1);
 ```
 
-## Filtering Logic
+#### `closePreview()`
+Closes preview modal and resets PDF state.
 
-### Combined Filters
-
-When multiple filters are active:
-
-```javascript
-// Subject + Level filter
-filteredPapers = papersData.filter(p => 
-    p.subject === currentSubject && p.level === currentLevel
-);
-
-// Search + Subject filter
-filteredPapers = papersData.filter(p =>
-    p.subject === currentSubject &&
-    (p.title.includes(searchTerm) || p.description.includes(searchTerm))
-);
-
-// Advanced filters (Rating + Year + Difficulty)
-filteredPapers = papersData.filter(p =>
-    p.rating >= minRating &&
-    p.year === selectedYear &&
-    p.difficulty === selectedDifficulty
-);
+```js
+closePreview();
 ```
 
-## Sorting Logic
+#### `loadPDF(url)`
+Loads PDF document with PDF.js and renders first page.
 
-```javascript
-// By downloads (descending)
-papers.sort((a, b) => b.downloads - a.downloads)
-
-// By rating (descending)
-papers.sort((a, b) => b.rating - a.rating)
-
-// By year (descending - newest first)
-papers.sort((a, b) => b.year - a.year)
-
-// By title (ascending - A to Z)
-papers.sort((a, b) => a.title.localeCompare(b.title))
+```js
+loadPDF('papers/biology/klb-biology-form-4.pdf');
 ```
 
-## Error Handling
+#### `renderPage(num)`
+Renders a specific page number onto `#pdfCanvas`.
 
-### PDF Loading Errors
-
-```javascript
-pdfjsLib.getDocument(pdfUrl).promise
-    .then(pdf => { /* success */ })
-    .catch(error => {
-        console.error('PDF Error:', error);
-        alert('Could not load PDF preview...');
-    });
+```js
+renderPage(2);
 ```
 
-### File Not Found
+#### `nextPage()`
+Advances preview to the next page if available.
 
-If a `pdfUrl` points to a non-existent file, the preview will show an error message and offer the download option.
+```js
+nextPage();
+```
 
-## Performance Considerations
+#### `previousPage()`
+Moves preview to the previous page if available.
 
-- PDFs are loaded on-demand (not on page load)
-- Large PDFs (>50MB) may take time to load
-- PDF.js renders only the current page (memory efficient)
-- Search history is limited to last 5 items
-- Batch operations limited to visible filtered papers
+```js
+previousPage();
+```
 
-## Future API Enhancements
+---
 
-Planned additions:
-- Backend database integration
-- User authentication
-- Comments and ratings system
-- Paper upload interface
-- Analytics tracking
-- Multi-language support
+### Download
+
+#### `downloadPaper(event, pdfUrl, title)`
+Triggers file download using an `<a>` element.
+
+```js
+downloadPaper(null, 'papers/physics/physics-form-1-questions.pdf', 'Physics Form 1 Questions');
+```
+
+#### `downloadPreviewedPaper()`
+Downloads the currently previewed paper.
+
+```js
+downloadPreviewedPaper();
+```
+
+## Initialization flow
+
+On `DOMContentLoaded`, the app runs:
+
+```js
+renderPapers(papersData);
+```
+
+This displays all available papers at startup.
