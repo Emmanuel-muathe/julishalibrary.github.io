@@ -255,6 +255,27 @@ body {
     margin-top: 1rem;
 }
 
+
+.section-toggle[aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.section-toggle[aria-expanded="false"] .toggle-icon {
+    transform: rotate(0deg);
+}
+
+.section-toggle .toggle-icon.is-expanded {
+    transform: rotate(180deg);
+}
+
+#subjectsContent[hidden],
+#aboutContent[hidden],
+#contactContent[hidden],
+#newsletterContent[hidden] {
+    display: none !important;
+}
+
+
 .level-filters,
 .filter-tags {
     display: flex;
@@ -472,6 +493,28 @@ body {
     color: var(--primary-color);
 }
 
+.related-papers-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.related-paper-item {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    background: var(--card-bg);
+}
+
+.related-paper-item h4 {
+    margin-bottom: 0.35rem;
+}
+
+.related-paper-item p {
+    margin-bottom: 0.6rem;
+    color: var(--text-secondary);
+}
+
 .preview-header {
     border-bottom: 2px solid var(--primary-color);
     padding-bottom: 1rem;
@@ -542,6 +585,14 @@ body {
 #pdfCanvas {
     max-width: 100%;
     margin: 0 auto;
+}
+
+.privacy-notice {
+    margin: 1rem 0;
+    padding: 0.8rem 1rem;
+    border-left: 4px solid var(--primary-color);
+    background-color: rgba(59, 130, 246, 0.1);
+    border-radius: 6px;
 }
 
 /* Footer */

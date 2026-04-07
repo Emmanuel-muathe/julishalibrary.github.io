@@ -1,0 +1,33 @@
+name: Quality Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run HTML/CSS/JS linting
+        run: npm run lint
+
+      - name: Run Markdown link checks
+        run: npm run check:docs
+
+      - name: Run papers data integrity checks
+        run: npm run check:data

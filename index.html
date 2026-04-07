@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Julisha Library - Free Revision Papers</title>
+    <meta name="description" content="Julisha Library offers free revision papers and study materials to help students prepare effectively across key school subjects.">
+    <link rel="canonical" href="https://julishalibrary.github.io/">
+    <meta property="og:title" content="Julisha Library - Free Revision Papers">
+    <meta property="og:description" content="Access free revision papers and study materials across subjects at Julisha Library.">
+    <meta property="og:url" content="https://julishalibrary.github.io/">
+    <meta property="og:image" content="https://julishalibrary.github.io/icon.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Julisha Library - Free Revision Papers">
+    <meta name="twitter:description" content="Access free revision papers and study materials across subjects at Julisha Library.">
+    <meta name="twitter:image" content="https://julishalibrary.github.io/icon.png">
     <link rel="icon" type="image/png" href="icon.png?v=5" sizes="16x16">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -33,7 +44,7 @@
         <div class="hero-content">
             <h1>Karibu 👋 </h1>
             <p>Your free resource for revision papers and study materials</p>
-            <button class="btn-primary" onclick="document.getElementById('papers').scrollIntoView({behavior: 'smooth'})">Browse Papers</button>
+            <button class="btn-primary" onclick="scrollToPapers()">Browse Papers</button>
         </div>
     </section>
 
@@ -50,6 +61,17 @@
                     list="searchSuggestions"
                 >
                 <datalist id="searchSuggestions"></datalist>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Section -->
+    <!-- Featured Papers Section -->
+    <section class="papers-section" id="featured">
+        <div class="container">
+            <h2>Featured Papers</h2>
+            <div class="papers-grid" id="featuredGrid">
+                <!-- Featured papers will be dynamically loaded here -->
             </div>
         </div>
     </section>
@@ -116,6 +138,9 @@
                     <button class="btn-primary" id="previewDownloadBtn" onclick="downloadPreviewedPaper()">
                         📥 Download PDF
                     </button>
+                    <button class="btn-secondary" onclick="openRelatedPapers()">
+                        📚 Related Papers
+                    </button>
                     <button class="btn-secondary" id="viewFullPreviewBtn" onclick="viewFullPDF()" style="display: none;">
                         🔍 View Full PDF
                     </button>
@@ -132,7 +157,7 @@
     <!-- Subjects Section -->
     <section class="subjects-section" id="subjects">
         <div class="container">
-            <button class="section-toggle" onclick="toggleSection('subjectsContent')">
+            <button class="section-toggle" onclick="toggleSection('subjectsContent')" aria-controls="subjectsContent" aria-expanded="true">
                 <span>Browse by Subject</span>
                 <span class="toggle-icon">▼</span>
             </button>
@@ -172,7 +197,7 @@
     <!-- About Section -->
     <section class="about-section" id="about">
         <div class="container">
-            <button class="section-toggle" onclick="toggleSection('aboutContent')">
+            <button class="section-toggle" onclick="toggleSection('aboutContent')" aria-controls="aboutContent" aria-expanded="true">
                 <span>About Julisha Library</span>
                 <span class="toggle-icon">▼</span>
             </button>
@@ -199,11 +224,14 @@
     <!-- Contact Section -->
     <section class="contact-section">
         <div class="container">
-            <button class="section-toggle" onclick="toggleSection('contactContent')">
+            <button class="section-toggle" onclick="toggleSection('contactContent')" aria-controls="contactContent" aria-expanded="true">
                 <span>Contact &amp; Support</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div id="contactContent">
+                <p class="privacy-notice">
+                    🔒 Privacy notice: Contact submissions are processed for support purposes only. Please avoid sharing sensitive personal information. Messages may be retained for up to 30 days for issue follow-up and can be deleted on verified request.
+                </p>
                 <form id="contactForm" class="contact-form" action="https://formsubmit.co/julishalibrary@gmail.com" method="POST">
                     <div class="form-group">
                         <label for="contactName">Name *</label>
@@ -236,7 +264,7 @@
     <!-- Newsletter Section -->
     <section class="newsletter-section">
         <div class="container">
-            <button class="section-toggle" onclick="toggleSection('newsletterContent')">
+            <button class="section-toggle" onclick="toggleSection('newsletterContent')" aria-controls="newsletterContent" aria-expanded="true">
                 <span>📬 Get Updates</span>
                 <span class="toggle-icon">▼</span>
             </button>
@@ -259,7 +287,9 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Julisha Library. Project by Emmanuel Muathe &amp; Marks Nduati. All rights reserved.</p>
+            <p>&copy; 2026 Julisha Library.</p>
+            <p>Released under the <a href="LICENSE" target="_blank" rel="noopener">MIT License</a>.</p>
+            <p><strong>Project by:</strong> Emmanuel Muathe &amp; Marks Nduati.</p>
             <p>   All revision papers are property of respective authors<a href="https://github.com/Julishalibrary/julishalibrary.github.io/">contribute on GitHub</a></p>
         </div>
     </footer>
