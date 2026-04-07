@@ -21,6 +21,7 @@ const papersData = [
         year: 2026,
         downloads: 0,
         rating: 0,
+        featured: true,
         pages: 0,
         difficulty: "Hard",
         pdfUrl: "papers/biology/klb-biology-form-4.pdf"
@@ -35,6 +36,7 @@ const papersData = [
         year: 2026,
         downloads: 0,
         rating: 0,
+        featured: true,
         pages: 0,
         difficulty: "Hard",
         pdfUrl: "papers/mathematics/form-4-additional-mathematics.pdf"
@@ -49,6 +51,7 @@ const papersData = [
         year: 2026,
         downloads: 0,
         rating: 0,
+        featured: true,
         pages: 0,
         difficulty: "Medium",
         pdfUrl: "papers/physics/physics-form-1-questions.pdf",
@@ -295,21 +298,164 @@ window.papersData = papersData;
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
+    renderFeatured();
     renderPapers(papersData);
+    renderFeatured();
 });
+
+/**
+ * Smooth-scroll to papers section
+ */
+function scrollToPapers() {
+    const papersSection = document.getElementById('papers');
+    if (papersSection) {
+        papersSection.scrollIntoView({ behavior: 'smooth' });
+    }
+}
 
 /**
  * Render all papers
  */
 function renderPapers(papers) {
     const papersGrid = document.getElementById('papersGrid');
+    papersGrid.replaceChildren();
 
     if (papers.length === 0) {
-        papersGrid.innerHTML = '<div class="empty-state"><p>No papers found.</p></div>';
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        const message = document.createElement('p');
+        message.textContent = 'No papers found.';
+        emptyState.appendChild(message);
+        papersGrid.appendChild(emptyState);
         return;
     }
 
-    papersGrid.innerHTML = papers.map(paper => `
+    papers.forEach((paper) => {
+        const paperCard = document.createElement('div');
+        paperCard.className = 'paper-card';
+        paperCard.addEventListener('click', () => previewPaper(paper.id));
+
+        const paperHeader = document.createElement('div');
+        paperHeader.className = 'paper-header';
+
+        const paperTags = document.createElement('div');
+        paperTags.className = 'paper-tags';
+
+        const paperSubject = document.createElement('span');
+        paperSubject.className = 'paper-subject';
+        paperSubject.textContent = paper.subject;
+
+        const paperLevel = document.createElement('span');
+        paperLevel.className = 'paper-level';
+        paperLevel.textContent = paper.level;
+
+        paperTags.appendChild(paperSubject);
+        paperTags.appendChild(paperLevel);
+
+        const paperTitle = document.createElement('h3');
+        paperTitle.textContent = paper.title;
+
+        paperHeader.appendChild(paperTags);
+        paperHeader.appendChild(paperTitle);
+
+        const paperBody = document.createElement('div');
+        paperBody.className = 'paper-body';
+
+        const paperDescription = document.createElement('p');
+        paperDescription.className = 'paper-description';
+        paperDescription.textContent = paper.description;
+
+        const paperMeta = document.createElement('div');
+        paperMeta.className = 'paper-meta';
+
+        const rating = document.createElement('span');
+        rating.className = 'rating';
+        rating.textContent = `⭐ ${paper.rating}`;
+
+        const downloads = document.createElement('span');
+        downloads.className = 'downloads';
+        downloads.textContent = `📥 ${paper.downloads}`;
+
+        paperMeta.appendChild(rating);
+        paperMeta.appendChild(downloads);
+
+        const downloadButton = document.createElement('button');
+        downloadButton.className = 'download-btn';
+        downloadButton.textContent = '📥 Download';
+        downloadButton.addEventListener('click', (event) => {
+            downloadPaper(event, paper.pdfUrl, paper.title);
+        });
+
+        paperBody.appendChild(paperDescription);
+        paperBody.appendChild(paperMeta);
+        paperBody.appendChild(downloadButton);
+
+        paperCard.appendChild(paperHeader);
+        paperCard.appendChild(paperBody);
+
+        papersGrid.appendChild(paperCard);
+    });
+}
+
+/**
+ * Render featured papers
+ */
+function renderFeatured() {
+    const featuredGrid = document.getElementById('featuredGrid');
+    if (!featuredGrid) return;
+
+    const featuredPapers = papersData.filter(paper => paper.featured === true);
+    if (featuredPapers.length === 0) {
+        featuredGrid.innerHTML = '<div class="empty-state"><p>No featured papers available yet.</p></div>';
+        return;
+    }
+
+    featuredGrid.innerHTML = featuredPapers.map(paper => `
+        <div class="paper-card" onclick="previewPaper(${paper.id})">
+            <div class="paper-header">
+                <div class="paper-tags">
+                    <span class="paper-subject">${paper.subject}</span>
+                    <span class="paper-level">${paper.level}</span>
+                </div>
+                <h3>${paper.title}</h3>
+            </div>
+            <div class="paper-body">
+                <p class="paper-description">${paper.description}</p>
+                <div class="paper-meta">
+                    <span class="rating">⭐ ${paper.rating}</span>
+                    <span class="downloads">📥 ${paper.downloads}</span>
+                </div>
+                <button class="download-btn" onclick="downloadPaper(event, '${paper.pdfUrl}', '${paper.title}')">
+                    📥 Download
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+/**
+ * Render featured papers using deterministic ranking:
+ * highest rating, then downloads, then newest year, then lowest id.
+ */
+function renderFeatured() {
+    const featuredGrid = document.getElementById('featuredGrid');
+    if (!featuredGrid) return;
+
+    const featuredPapers = [...papersData]
+        .sort((a, b) => {
+            if (b.rating !== a.rating) return b.rating - a.rating;
+            if (b.downloads !== a.downloads) return b.downloads - a.downloads;
+            if (b.year !== a.year) return (b.year || 0) - (a.year || 0);
+            return a.id - b.id;
+        })
+        .slice(0, 6);
+
+    if (featuredPapers.length === 0) {
+        featuredGrid.innerHTML = '<div class="empty-state"><p>No featured papers available right now.</p></div>';
+        return;
+    }
+
+    featuredGrid.innerHTML = featuredPapers.map(paper => `
         <div class="paper-card" onclick="previewPaper(${paper.id})">
             <div class="paper-header">
                 <div class="paper-tags">
@@ -346,6 +492,24 @@ function filterPapers() {
 }
 
 /**
+ * Filter papers by subject card selection
+ */
+function filterBySubject(subject) {
+    const normalizedSubject = String(subject || '').toLowerCase();
+    const filtered = papersData.filter(
+        paper => paper.subject.toLowerCase() === normalizedSubject
+    );
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = subject;
+    }
+
+    renderPapers(filtered);
+    scrollToPapers();
+}
+
+/**
  * Preview paper
  */
 function previewPaper(paperId) {
@@ -359,8 +523,22 @@ function previewPaper(paperId) {
     document.getElementById('previewYear').textContent = paper.year ? `Year: ${paper.year}` : '';
     document.getElementById('previewPages').textContent = `${paper.pages} pages`;
     document.getElementById('previewDescription').textContent = paper.description;
+    document.getElementById('previewRating').textContent = Number(paper.rating || 0).toFixed(1);
+    document.getElementById('previewDownloads').textContent = paper.downloads || 0;
+
+    const difficultyFeedback = document.getElementById('difficultyFeedback');
+    if (difficultyFeedback) {
+        difficultyFeedback.style.display = 'none';
+        difficultyFeedback.textContent = '';
+    }
+
+    const viewFullPreviewBtn = document.getElementById('viewFullPreviewBtn');
+    if (viewFullPreviewBtn) {
+        viewFullPreviewBtn.style.display = paper.pdfUrl ? 'inline-flex' : 'none';
+    }
 
     document.getElementById('previewModal').style.display = 'flex';
+    renderRelatedPapers(paper);
 
     // Load PDF preview
     loadPDF(paper.pdfUrl);
@@ -373,6 +551,65 @@ function closePreview() {
     document.getElementById('previewModal').style.display = 'none';
     pdfDoc = null;
     pageNum = 1;
+}
+
+/**
+ * Compute related papers by shared subject / level.
+ * - +2 score for matching subject
+ * - +1 score for matching level
+ */
+function getRelatedPapers(paper, limit = 6) {
+    if (!paper) return [];
+
+    return papersData
+        .filter(candidate => candidate.id !== paper.id)
+        .map(candidate => {
+            let score = 0;
+            if (candidate.subject === paper.subject) score += 2;
+            if (candidate.level === paper.level) score += 1;
+            return { ...candidate, _score: score };
+        })
+        .filter(candidate => candidate._score > 0)
+        .sort((a, b) => b._score - a._score || b.year - a.year || a.title.localeCompare(b.title))
+        .slice(0, limit);
+}
+
+/**
+ * Render related papers list in modal.
+ */
+function renderRelatedPapers(paper) {
+    const list = document.getElementById('relatedPapersList');
+    if (!list) return;
+
+    const related = getRelatedPapers(paper);
+    if (related.length === 0) {
+        list.innerHTML = '<p>No related papers found yet.</p>';
+        return;
+    }
+
+    list.innerHTML = related.map(item => `
+        <div class="related-paper-item">
+            <h4>${item.title}</h4>
+            <p>${item.subject} • ${item.level}</p>
+            <button class="btn-secondary" onclick="openRelatedPaper(${item.id})">Open</button>
+        </div>
+    `).join('');
+}
+
+function openRelatedPaper(paperId) {
+    closeRelatedPapers();
+    previewPaper(paperId);
+}
+
+function openRelatedPapers() {
+    if (!currentPreviewedPaper) return;
+    renderRelatedPapers(currentPreviewedPaper);
+    document.getElementById('relatedPapersModal').style.display = 'flex';
+}
+
+function closeRelatedPapers() {
+    const modal = document.getElementById('relatedPapersModal');
+    if (modal) modal.style.display = 'none';
 }
 
 /**
@@ -474,6 +711,74 @@ function downloadPreviewedPaper() {
 }
 
 /**
+ * Vote on paper difficulty
+ */
+function voteDifficulty(level) {
+    if (!currentPreviewedPaper || !level) return;
+
+    const key = 'difficultyVotes';
+    const votes = JSON.parse(localStorage.getItem(key) || '{}');
+    votes[currentPreviewedPaper.id] = level;
+    localStorage.setItem(key, JSON.stringify(votes));
+
+    const difficultyFeedback = document.getElementById('difficultyFeedback');
+    if (difficultyFeedback) {
+        difficultyFeedback.textContent = `Thanks! You voted "${level}" for "${currentPreviewedPaper.title}".`;
+        difficultyFeedback.style.display = 'block';
+    }
+}
+
+/**
+ * Open the current PDF in a new tab
+ */
+function viewFullPDF() {
+    if (!currentPreviewedPaper || !currentPreviewedPaper.pdfUrl) return;
+    window.open(currentPreviewedPaper.pdfUrl, '_blank', 'noopener');
+}
+
+/**
+ * Copy the current paper URL to clipboard
+ */
+function sharePaperLink() {
+    if (!currentPreviewedPaper) return;
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?paper=${currentPreviewedPaper.id}`;
+    const onSuccess = () => alert('Paper link copied to clipboard.');
+    const onFailure = () => alert(`Unable to copy automatically. Link: ${shareUrl}`);
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl).then(onSuccess).catch(onFailure);
+        return;
+    }
+
+    onFailure();
+}
+
+/**
+ * Share the current paper via mail client
+ */
+function shareViaEmail() {
+    if (!currentPreviewedPaper) return;
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?paper=${currentPreviewedPaper.id}`;
+    const subject = encodeURIComponent(`Check out this paper: ${currentPreviewedPaper.title}`);
+    const body = encodeURIComponent(
+        `I found this paper on Julisha Library:\n\n${currentPreviewedPaper.title}\n${shareUrl}`
+    );
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+/**
+ * Close related papers modal
+ */
+function closeRelatedPapers() {
+    const relatedPapersModal = document.getElementById('relatedPapersModal');
+    if (relatedPapersModal) {
+        relatedPapersModal.style.display = 'none';
+    }
+}
+
+/**
  * Show search suggestions
  */
 function showSearchSuggestions() {
@@ -494,5 +799,119 @@ function showSearchSuggestions() {
 function toggleSection(id) {
     const el = document.getElementById(id);
     if (!el) return;
-    el.style.display = el.style.display === 'none' || el.style.display === '' ? 'block' : 'none';
+
+    const button = document.querySelector(`.section-toggle[aria-controls="${id}"]`);
+    const willExpand = el.hasAttribute('hidden');
+
+    el.toggleAttribute('hidden');
+
+    if (button) {
+        button.setAttribute('aria-expanded', String(willExpand));
+
+        const icon = button.querySelector('.toggle-icon');
+        if (icon) {
+            icon.classList.toggle('is-expanded', willExpand);
+        }
+    }
 }
+
+/**
+ * Close related papers modal
+ */
+function closeRelatedPapers() {
+    const relatedPapersModal = document.getElementById('relatedPapersModal');
+    if (!relatedPapersModal) return;
+    relatedPapersModal.style.display = 'none';
+}
+
+/**
+ * Capture difficulty feedback for current paper
+ */
+function voteDifficulty(level) {
+    const difficultyFeedback = document.getElementById('difficultyFeedback');
+    if (!difficultyFeedback) return;
+
+    if (!currentPreviewedPaper) {
+        difficultyFeedback.textContent = 'Open a paper preview first to vote on difficulty.';
+        difficultyFeedback.style.display = 'block';
+        return;
+    }
+
+    currentPreviewedPaper.difficulty = level;
+    difficultyFeedback.textContent = `Thanks! You marked this paper as "${level}".`;
+    difficultyFeedback.style.display = 'block';
+}
+
+/**
+ * Open currently previewed PDF in new tab
+ */
+function viewFullPDF() {
+    if (!currentPreviewedPaper || !currentPreviewedPaper.pdfUrl) return;
+    window.open(currentPreviewedPaper.pdfUrl, '_blank', 'noopener,noreferrer');
+}
+
+/**
+ * Share current paper link via clipboard
+ */
+function sharePaperLink() {
+    if (!currentPreviewedPaper || !currentPreviewedPaper.pdfUrl) return;
+
+    const paperUrl = new URL(currentPreviewedPaper.pdfUrl, window.location.href).toString();
+    const fallbackCopy = function(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'absolute';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(paperUrl).then(function() {
+            alert('Paper link copied to clipboard.');
+        }).catch(function() {
+            fallbackCopy(paperUrl);
+            alert('Paper link copied to clipboard.');
+        });
+        return;
+    }
+
+    fallbackCopy(paperUrl);
+    alert('Paper link copied to clipboard.');
+}
+
+/**
+ * Share current paper via email
+ */
+function shareViaEmail() {
+    if (!currentPreviewedPaper || !currentPreviewedPaper.pdfUrl) return;
+
+    const paperUrl = new URL(currentPreviewedPaper.pdfUrl, window.location.href).toString();
+    const subject = encodeURIComponent(`Check out this paper: ${currentPreviewedPaper.title}`);
+    const body = encodeURIComponent(`I found this revision paper on Julisha Library:\n\n${currentPreviewedPaper.title}\n${paperUrl}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+/**
+ * Filter papers by exact subject match
+ */
+function filterBySubject(subject) {
+    const filtered = papersData.filter(paper => paper.subject === subject);
+    renderPapers(filtered);
+}
+
+window.addEventListener('click', function(event) {
+    const previewModal = document.getElementById('previewModal');
+    const relatedModal = document.getElementById('relatedPapersModal');
+
+    if (previewModal && event.target === previewModal) {
+        closePreview();
+    }
+
+    if (relatedModal && event.target === relatedModal) {
+        closeRelatedPapers();
+    }
+});
