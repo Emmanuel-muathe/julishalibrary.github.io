@@ -8,7 +8,7 @@ A free, open-source platform for hosting and accessing revision papers and study
 - **Multiple Subjects**: Browse papers across Mathematics, Physics, Chemistry, Biology, English, History, and more
 - **Search & Filter**: Easily search for papers by title or topic
 - **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
-- **No Dependencies**: Pure HTML, CSS, and JavaScript - no frameworks required
+- **Minimal Stack**: Static HTML/CSS/JS front-end with a lightweight Node/Express local server for development
 - **Easy to Deploy**: Hosted on GitHub Pages at no cost
 - **Community-Driven**: Easy to contribute new papers and materials
   
