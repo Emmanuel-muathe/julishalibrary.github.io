@@ -494,5 +494,18 @@ function showSearchSuggestions() {
 function toggleSection(id) {
     const el = document.getElementById(id);
     if (!el) return;
-    el.style.display = el.style.display === 'none' || el.style.display === '' ? 'block' : 'none';
+
+    const button = document.querySelector(`.section-toggle[aria-controls="${id}"]`);
+    const willExpand = el.hasAttribute('hidden');
+
+    el.toggleAttribute('hidden');
+
+    if (button) {
+        button.setAttribute('aria-expanded', String(willExpand));
+
+        const icon = button.querySelector('.toggle-icon');
+        if (icon) {
+            icon.classList.toggle('is-expanded', willExpand);
+        }
+    }
 }
